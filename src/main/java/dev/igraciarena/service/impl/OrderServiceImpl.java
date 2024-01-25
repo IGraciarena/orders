@@ -1,14 +1,16 @@
 package dev.igraciarena.service.impl;
 
-import static dev.igraciarena.exception.EntityError.ORDER_ID_NOT_FOUND;
-
-import dev.igraciarena.domain.models.Order;
+import dev.igraciarena.domain.dtos.request.OrderCreateRequest;
+import dev.igraciarena.domain.entities.OrderEntity;
 import dev.igraciarena.exception.EntityNotFoundException;
 import dev.igraciarena.mapper.OrderMapper;
 import dev.igraciarena.repository.OrderRepository;
 import dev.igraciarena.service.OrderService;
-import java.util.UUID;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+import static dev.igraciarena.exception.EntityError.ORDER_ID_NOT_FOUND;
 
 /**
  * @author ivan.graciarena
@@ -16,20 +18,28 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class OrderServiceImpl implements OrderService {
-  private final OrderRepository orderRepository;
-  private static final OrderMapper orderMapper = OrderMapper.INSTANCE;
+    private static final OrderMapper ORDER_MAPPER = OrderMapper.INSTANCE;
+    private final OrderRepository orderRepository;
 
-  public OrderServiceImpl(OrderRepository orderRepository) {
-    this.orderRepository = orderRepository;
-  }
+    public OrderServiceImpl(final OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
+    }
 
-  @Override
-  public Order getOrderById(UUID id) {
-    var order =
-        orderRepository
-            .findById(id)
-            .orElseThrow(() -> new EntityNotFoundException(ORDER_ID_NOT_FOUND));
+    @Override
+    public OrderEntity getOrderById(final Long orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(
+                        () -> new EntityNotFoundException(ORDER_ID_NOT_FOUND));
+    }
 
-    return orderMapper.mapToModel(order);
-  }
+    @Override
+    public OrderEntity saveOrder(final OrderCreateRequest order) {
+        var orderMapped = ORDER_MAPPER.mapToEntity(order);
+        return orderRepository.save(orderMapped);
+    }
+
+    @Override
+    public List<OrderEntity> findAllByClientId(final Long clientId) {
+        return orderRepository.findAllByClientId(clientId);
+    }
 }

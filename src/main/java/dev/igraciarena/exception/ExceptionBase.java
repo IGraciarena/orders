@@ -9,9 +9,9 @@ import lombok.Getter;
 @Getter
 public class ExceptionBase extends RuntimeException {
 
-  private final EntityError error;
+    private final EntityError error;
 
-  public ExceptionBase(EntityError error) {
-    this.error = error;
-  }
+    public ExceptionBase(final EntityError error) {
+        this.error = error;
+    }
 }

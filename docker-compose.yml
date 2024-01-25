@@ -1,0 +1,24 @@
+version: "3.9"
+
+services:
+  orders:
+    container_name: orders
+    image: order_service:1.0.0
+    build: .
+    ports:
+      - 1111:1111
+    environment:
+      - DB_URL=jdbc:mysql://order_domain:3306/order_domain
+      - DB_USERNAME=igraciarena
+      - DB_PASSWORD=soma1251
+    depends_on:
+      - order_domain
+  order_domain:
+    container_name: order_domain
+    image: mysql:8.0
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_USERNAME: igraciarena
+      MYSQL_PASSWORD: soma1251
+      MYSQL_DB: order_domain
